@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+import sys
 
 #########################
 # Parametros de entrada.#
@@ -7,6 +8,10 @@ import cv2
 videoFilename = 'funnybaby.avi'
 textFilename = 'funnybaby.txt'
 salto = 1 
+
+if len(sys.argv) > 2:
+    videoFilename = sys.argv[1]
+    textFilename = sys.argv[2]
 
 # Abrimos archivo de video. 
 video = cv2.VideoCapture(videoFilename)

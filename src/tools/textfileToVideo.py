@@ -1,10 +1,16 @@
 import numpy as np
 import cv2
+import sys
+
 #########################
 # Parametros de entrada.#
 #########################
 textFilename = 'funnybaby.txt'
 videoFilename = 'fb.avi'
+
+if len(sys.argv) > 2:
+    textFilename = sys.argv[1]
+    videoFilename = sys.argv[2]
 
 file = open(textFilename,"r")
 

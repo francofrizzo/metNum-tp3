@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    ofile.open(args.ofile, ios_base::app);  // archivo de salida
+    ofile.open(args.ofile, ios_base::out);  // archivo de salida
     if (! ofile.good()) {
         cout << "Error al abrir el archivo de salida" << endl;
         exit(1);
@@ -80,23 +80,30 @@ int main(int argc, char* argv[]) {
         exit(1);
     }
 
-    // Declaracion de variables de datos
-    int c, nuevo_c, height, width, f, pixel;
+    // Parseo del archivo de entrada
+    int c, nuevo_c, height, width, f;
+    string line;
+    
+    getline(ifile, line);
+    c = stoi(line);
+    getline(ifile, line, ',');
+    height = stoi(line);
+    getline(ifile, line);
+    width = stoi(line);
+    getline(ifile, line);
+    f = stoi(line);
+
     vector<vector<vector<int> > > ivideo(height, vector<vector<int> >(width, vector<int>()));
     vector<vector<vector<int> > > ovideo(height, vector<vector<int> >(width, vector<int>()));
 
-    // Parseo del archivo de entrada
-    ifile >> c;
-    ifile >> height;
-    ifile >> width;
-    ifile >> f;
-
     for (int t = 0; t < c; t++) {
         for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                ifile >> pixel;
-                ivideo[i][j].push_back(pixel);
+            for (int j = 0; j < width - 1; j++) {
+                getline(ifile, line, ',');
+                ivideo[i][j].push_back(stoi(line));
             }
+            getline(ifile, line);
+            ivideo[i][width - 1].push_back(stoi(line));
         }
     }
 
@@ -108,12 +115,15 @@ int main(int argc, char* argv[]) {
             switch (args.alg) {
                 case ALG_VECINO: {
                     opixel = interpolar_vecino(ipixel, args.cant_cuadros);
+                    break;
                 }
                 case ALG_LINEAL: {
                     opixel = interpolar_lineal(ipixel, args.cant_cuadros);
+                    break;
                 }
                 case ALG_SPLINE: {
                     opixel = interpolar_spline(ipixel, args.cant_cuadros);
+                    break;
                 }
             }
             ovideo[i][j] = opixel;
@@ -121,19 +131,18 @@ int main(int argc, char* argv[]) {
     }
 
     // Escritura en archivo de salida
-    nuevo_c = c * (args.cant_cuadros + 1) - args.cant_cuadros;
+    nuevo_c = c + args.cant_cuadros * (c - 1);
 
     ofile << nuevo_c << endl;
-    ofile << height << " " << width << endl;
+    ofile << height << "," << width << endl;
     ofile << f << endl;
 
     for (int t = 0; t < nuevo_c; t++) {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width - 1; j++) {
-                ofile << ovideo[i][j][t] << " ";
+                ofile << ovideo[i][j][t] << ",";
             }
-            ofile << ovideo[i][width - 1][t];
-            ofile << endl;
+            ofile << ovideo[i][width - 1][t] << endl;
         }
     }
 
@@ -153,7 +162,6 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-
 
 void mostrar_ayuda(char* s) {
     cout << "  Modo de uso: " << setw(12) << s <<" [-opción] [argumento] <archivo_entrada>" << endl;

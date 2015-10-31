@@ -4,6 +4,7 @@
 #include "./config.h"
 #include <vector>    // tipo vector
 #include <string.h>  // tipo string
+#include <math.h>    // round
 
 vector<int> interpolar_vecino(const vector<int> ipixel, const int cant_cuadros);
 
