@@ -2,7 +2,22 @@
 
 vector<int> interpolar_vecino(const vector<int> ipixel, const int cant_cuadros) {
     vector<int> opixel;
-    opixel = ipixel;
+    
+    for (int i = 0; i < ipixel.size(); i++){
+        opixel.push_back(ipixel[i]);
+
+        for (int j = 0; j < (cant_cuadros / 2); j++){ //el del medio queda igual que el de la derecha
+            opixel.push_back(ipixel[i]);
+        }
+        
+        for (int j = (cant_cuadros / 2); j < cant_cuadros; j++){
+            opixel.push_back(ipixel[i + 1]);
+        }
+
+    }    
+    
+    opixel.push_back(ipixel[ipixel.size()]);
+
     return opixel;
 }
 
