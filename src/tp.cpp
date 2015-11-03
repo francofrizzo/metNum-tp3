@@ -38,7 +38,7 @@ int main(int argc, char* argv[]) {
 
     // Parseo de opciones especiales
     char opt;
-    while ((opt = getopt(argc, argv, "htc")) != -1) {
+    while ((opt = getopt(argc, argv, "htcb:")) != -1) {
         switch (opt) {
             case 'h': { // mostrar ayuda
                 mostrar_ayuda(argv[0]);
@@ -51,6 +51,15 @@ int main(int argc, char* argv[]) {
             }
             case 'c': { // calcular cantidad de iteraciones
                 args.count_iter_flag = true;
+                break;
+            }
+            case 'b': { // realiza por bloques la interpolación por splines
+                args.bloques_flag = true;
+                INTENTAR_PARSEO(args.tamano_bloque = stoi(optarg);, <tam> de la opción -b);
+                if (args.tamano_bloque <= 0) {
+                    cout << "El parámetro <tam> de la opción -b debe ser un número positivo" << endl;
+                    exit(1);
+                }
                 break;
             }
             default: { // si las opciones son inválidas
@@ -122,7 +131,11 @@ int main(int argc, char* argv[]) {
                     break;
                 }
                 case ALG_SPLINE: {
-                    opixel = interpolar_spline(ipixel, args.cant_cuadros);
+                    if (args.bloques_flag) {
+                        opixel = interpolar_spline_bloques(ipixel, args.cant_cuadros, args.tamano_bloque);
+                    } else {
+                        opixel = interpolar_spline(ipixel, args.cant_cuadros);
+                    }
                     break;
                 }
             }
@@ -178,6 +191,8 @@ void mostrar_ayuda(char* s) {
     cout << "                  ción del método" << endl;
     cout << "    -c          Calcula e imprime en pantalla la cantidad de iteraciones del" << endl;
     cout << "                  algoritmo elegido que fueron ejecutadas" << endl;
+    cout << "    -b <tam>    Si la interpolación se realiza usando splines, aplica el algo-" << endl;
+    cout << "                  ritmo de a bloques con el tamaño indicado por parámetro" << endl;
 }
 
 void parsear_argumentos(conf& args, char* argv[]) {

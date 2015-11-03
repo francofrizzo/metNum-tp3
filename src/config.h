@@ -29,6 +29,9 @@ struct conf {
 
     bool count_iter_flag = false;   // determina si se contarán las iteraciones
     int count_iter = 0;        // contador de iteraciones
+
+    bool bloques_flag = false;  // determina si la interpolación por splines se hará por bloques
+    int tamano_bloque = 0;      // tamaño del bloque
 };
 
 template<typename T>
