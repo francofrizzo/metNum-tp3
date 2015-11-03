@@ -38,10 +38,30 @@ vector<int> interpolar_lineal(const vector<int> ipixel, const int cant_cuadros) 
     return opixel;
 }
 
-vector<int> interpolar_spline_bloques(const vector<int> ipixel, const int cant_cuadros, const int tamano_bloques) {
+vector<int> interpolar_spline_bloques(const vector<int> ipixel, const int cant_cuadros, const int tamano_bloque) {
     vector<int> opixel;
 
-    opixel = ipixel;
+    for (int i = 0; i < ipixel.size(); i = i + tamano_bloque) {
+        vector<int>::const_iterator first = ipixel.begin() + i;
+        vector<int>::const_iterator last;
+        if (i + tamano_bloque < ipixel.size()) {
+            last = ipixel.begin() + (i + tamano_bloque + 1);
+        } else {
+            last = ipixel.end();
+        }
+        vector<int> bloque = vector(first, last);
+
+        cout << bloque << endl;
+
+        bloque = interpolar_spline(bloque, cant_cuadros);
+
+        for (int j = 0; j < bloque.size() - 1; j++) {
+            opixel.push_back(bloque[j])
+        }
+    }
+
+    opixel.push_back(ipixel[ipixel.size()]);
+
     return opixel;
 }
 
@@ -60,20 +80,20 @@ vector<int> interpolar_spline(const vector<int> a, const int cant_cuadros) {
     // Burden, paso 1: lo omitimos porque h siempre vale 1
 
     // Burden, paso 2
-    for (int i = 0; i < n; i++) {
+    for (int i = 1; i < n; i++) {
         alpha[i] = 3 * (a[i+1] - 2 * a[i] + a[i-1]);
     }
 
     // Burden, paso 3
-    // l[0] = 1;
+    l[0] = 1;
     mu[0] = 0;
     z[0] = 0;
 
     // Burden, paso 4
-    for (int i = 0; i < n; i++) {
-        // l[i] = 4 - mu[i-1];
-        mu[i] = 1 / 4 - mu[i-1];
-        z[i] = (alpha[i] - z[i-1]) / (4 - mu[i-1]);
+    for (int i = 1; i < n; i++) {
+        l[i] = 4 - mu[i-1];
+        mu[i] = 1 / l[i];
+        z[i] = (alpha[i] - z[i-1]) / l[i];
     }
 
     // Burden, paso 5
@@ -87,21 +107,21 @@ vector<int> interpolar_spline(const vector<int> a, const int cant_cuadros) {
         d[j] = (c[j+1] - c[j]) / 3;
     }
 
-    cout << a << endl;
-    cout << b << endl;
-    cout << c << endl;
-    cout << d << endl;
-
     // Evaluacion de las splines
 
     double inc = (double) 1 / (cant_cuadros + 1);
-    cout << "Incremento: " << inc << endl;
     for (int i = 0; i < n; i++) {
         res.push_back(a[i]);
         for (int j = 1; j <= cant_cuadros; j++) {
-            double x = i + j * inc;
-            cout << x << endl;
-            res.push_back(a[i] + b[i] * x + c[i] * x * x + d[i] * x * x * x);
+            double x = j * inc;
+            int eval = round(a[i] + b[i] * x + c[i] * x * x + d[i] * x * x * x);
+            if (eval > 255) {
+                eval = 255;
+            }
+            if (eval < 0) {
+                eval = 0;
+            }
+            res.push_back(eval);
         }
     }
     res.push_back(a[n]);
