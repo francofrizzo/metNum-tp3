@@ -10,6 +10,8 @@ vector<int> interpolar_vecino(const vector<int> ipixel, const int cant_cuadros);
 
 vector<int> interpolar_lineal(const vector<int> ipixel, const int cant_cuadros);
 
+vector<int> interpolar_spline_bloques(const vector<int> ipixel, const int cant_cuadros, const int tamano_bloque);
+
 vector<int> interpolar_spline(const vector<int> ipixel, const int cant_cuadros);
 
 #endif
