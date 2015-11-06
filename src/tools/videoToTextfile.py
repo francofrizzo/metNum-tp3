@@ -22,7 +22,10 @@ frameRate = video.get(cv2.cv.CV_CAP_PROP_FPS)
 height = video.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
 width = video.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
 
-print 'Abriendo archivo: ' + str(video.isOpened())
+if not video.isOpened():
+	print "Error abriendo el archivo de video"
+	exit(1)
+
 print 'Info del video:'
 print '   # frames:\t' + str(nFrames)
 print '   Frame Rate:\t' + str(frameRate)

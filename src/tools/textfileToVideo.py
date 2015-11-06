@@ -12,7 +12,10 @@ if len(sys.argv) > 2:
     textFilename = sys.argv[1]
     videoFilename = sys.argv[2]
 
-file = open(textFilename,"r")
+try:
+    file = open(textFilename,"r")
+except IOError:
+    print "Error leyendo el archivo de entrada"
 
 # Guardamos informacion basica.
 nFrames = int(file.readline())

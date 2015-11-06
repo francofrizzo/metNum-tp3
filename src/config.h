@@ -34,6 +34,8 @@ struct conf {
     int tamano_bloque = 0;      // tamaño del bloque
 };
 
+extern conf args;
+
 template<typename T>
 ostream& operator<<(ostream& os, const vector<T>& vec) {
     os << "[";

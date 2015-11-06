@@ -3,12 +3,12 @@
 vector<int> interpolar_vecino(const vector<int> ipixel, const int cant_cuadros) {
     vector<int> opixel;
     
-    for (int i = 0; i < ipixel.size(); i++){
+    for (int i = 0; i < (int) ipixel.size(); i++) {
         opixel.push_back(ipixel[i]);
-        for (int j = 0; j < (cant_cuadros / 2); j++){ //el del medio queda igual que el de la derecha
+        for (int j = 0; j < (cant_cuadros / 2); j++) {  // el del medio queda igual que el de la derecha
             opixel.push_back(ipixel[i]);
         }
-        for (int j = (cant_cuadros / 2); j < cant_cuadros; j++){
+        for (int j = (cant_cuadros / 2); j < cant_cuadros; j++) {
             opixel.push_back(ipixel[i + 1]);
         }
     }    
@@ -21,7 +21,7 @@ vector<int> interpolar_vecino(const vector<int> ipixel, const int cant_cuadros) 
 vector<int> interpolar_lineal(const vector<int> ipixel, const int cant_cuadros) {
     vector<int> opixel;
 
-    for (int i = 0; i < ipixel.size() - 1; i++) {
+    for (int i = 0; i < (int) ipixel.size() - 1; i++) {
         opixel.push_back(ipixel[i]);
 
         double frame_actual = (double) ipixel[i];
@@ -41,28 +41,24 @@ vector<int> interpolar_lineal(const vector<int> ipixel, const int cant_cuadros) 
 vector<int> interpolar_spline_bloques(const vector<int> ipixel, const int cant_cuadros, const int tamano_bloque) {
     vector<int> opixel;
 
-    for (int i = 0; i < ipixel.size(); i = i + tamano_bloque) {
+    for (int i = 0; i < (int) ipixel.size(); i = i + tamano_bloque) {
         vector<int>::const_iterator first = ipixel.begin() + i;
         vector<int>::const_iterator last;
-        if (i + tamano_bloque < ipixel.size()) {
+        if (i + tamano_bloque < (int) ipixel.size()) {
             last = ipixel.begin() + (i + tamano_bloque + 1);
         } else {
             last = ipixel.end();
         }
         vector<int> bloque = vector<int>(first, last);
 
-        cout << bloque << endl;
-
         bloque = interpolar_spline(bloque, cant_cuadros);
 
-        for (int j = 0; j < bloque.size() - 1; j++) {
+        for (int j = 0; j < (int) bloque.size() - 1; j++) {
             opixel.push_back(bloque[j]);
         }
     }
 
     opixel.push_back(ipixel[ipixel.size() - 1]);
-
-    cout << opixel << endl;
 
     return opixel;
 }
@@ -80,7 +76,7 @@ vector<int> interpolar_spline(const vector<int> a, const int cant_cuadros) {
         vector<double> mu(n, 0);
         vector<double> z(n+1, 0);
         vector<double> b(n, 0);
-        vector<double> c(n, 0);
+        vector<double> c(n+1, 0);
         vector<double> d(n, 0);
 
         // Burden, paso 1: lo omitimos porque h siempre vale 1
@@ -132,7 +128,6 @@ vector<int> interpolar_spline(const vector<int> a, const int cant_cuadros) {
         }
         res.push_back(a[n]);
     }
-    cout << res << endl;
 
     return res;
 }

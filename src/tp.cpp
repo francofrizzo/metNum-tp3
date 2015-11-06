@@ -17,24 +17,16 @@
 using namespace std;
 
 void mostrar_ayuda(char*);
-void parsear_argumentos(conf&, char**);
+void parsear_argumentos(conf&, char**, int);
 void imprimir_tiempo(clock_t);
 
+conf args;
+
 int main(int argc, char* argv[]) {
-    conf args;
     ifstream ifile;
     ofstream ofile;
     // int cant_nodos;
     // int cant_aristas;
-
-    // Parseo de argumentos
-    if (argc > 4) {
-        parsear_argumentos(args, argv);
-    } else {
-        // En caso de faltar argumentos, mostrar ayuda y salir
-        mostrar_ayuda(argv[0]);
-        exit(1);
-    }
 
     // Parseo de opciones especiales
     char opt;
@@ -68,6 +60,15 @@ int main(int argc, char* argv[]) {
                 break;
             }
         }
+    }
+
+    // Parseo de argumentos
+    if (argc > 4) {
+        parsear_argumentos(args, argv, argc);
+    } else {
+        // En caso de faltar argumentos, mostrar ayuda y salir
+        mostrar_ayuda(argv[0]);
+        exit(1);
     }
 
     // Apertura de archivos de entrada y salida
@@ -117,6 +118,8 @@ int main(int argc, char* argv[]) {
     }
 
     // Ejecucion del algoritmo
+    MEDIR_TIEMPO_INICIO(args.timer);
+    
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             vector<int> ipixel = ivideo[i][j];
@@ -142,6 +145,8 @@ int main(int argc, char* argv[]) {
             ovideo[i][j] = opixel;
         }
     }
+    
+    MEDIR_TIEMPO_FIN(args.timer);
 
     // Escritura en archivo de salida
     nuevo_c = c + args.cant_cuadros * (c - 1);
@@ -195,9 +200,9 @@ void mostrar_ayuda(char* s) {
     cout << "                  ritmo de a bloques con el tamaño indicado por parámetro" << endl;
 }
 
-void parsear_argumentos(conf& args, char* argv[]) {
-    args.ifile = argv[1];
-    args.ofile = argv[2];
-    INTENTAR_PARSEO(args.alg = stoi(argv[3]);, <algoritmo>)
-    INTENTAR_PARSEO(args.cant_cuadros = stod(argv[4]);, <cant_cuadros>)
+void parsear_argumentos(conf& args, char* argv[], int argc) {
+    args.ifile = argv[argc - 4];
+    args.ofile = argv[argc - 3];
+    INTENTAR_PARSEO(args.alg = stoi(argv[argc - 2]);, <algoritmo>)
+    INTENTAR_PARSEO(args.cant_cuadros = stod(argv[argc - 1]);, <cant_cuadros>)
 }
