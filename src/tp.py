@@ -36,20 +36,27 @@ parser.add_argument('-b', '--bloques', metavar = 'tam', type = str,
                     help = 'si la interpolación se realiza usando splines, aplica el algoritmo de a bloques con el tamaño indicado por parámetro')
 parser.add_argument('-t', '--timer', action = "store_true",
                     help = 'calcula e imprime en pantalla el tiempo insumido por la ejecución del método')
+parser.add_argument('-q', '--quiet', action = "store_true",
+                    help = 'no emite comentarios innecesarios')
 
 args = parser.parse_args()
 
 # Si es necesario, convertimos el video a texto
 if not args.text_in:
-    print "Convirtiendo video a texto para ser procesado..."
+    if not args.quiet:
+        print "Convirtiendo video a texto para ser procesado..."
     itextfile = args.ifile + ".txt"
     if not os.path.isfile(itextfile):
-        conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"])
+        if args.quiet:
+            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"], stdout='/dev/null')
+        else:
+            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"])
         if conv_call != 0:
             print "Ocurrió un error durante la conversión del video a texto"
             exit(1)
     else:
-        print "El video ya había sido convertido a texto. Se utilizará la versión existente"
+        if not args.quiet:
+            print "El video ya había sido convertido a texto. Se utilizará la versión existente"
 else:
     itextfile = args.ifile
 
@@ -60,7 +67,8 @@ else:
     otextfile = args.ofile
 
 # Pasaje a camara lenta
-print "Ejecutando el algoritmo solicitado..."
+if not args.quiet:
+    print "Ejecutando el algoritmo solicitado..."
 tp_args = []
 if args.bloques != None:
     tp_args.extend(["-b", args.bloques])
@@ -75,8 +83,12 @@ if tp_call != 0:
 
 # Si es necesario, convertimos la salida a video
 if not args.text_out:
-    print "Convirtiendo la salida del algoritmo a video..."
-    conv_call = call(["python", textfile_to_video, otextfile, args.ofile])
+    if not args.quiet:
+        print "Convirtiendo la salida del algoritmo a video..."
+    if args.quiet:
+        conv_call = call(["python", textfile_to_video, otextfile, args.ofile], stdout='/dev/null')
+    else:
+        conv_call = call(["python", textfile_to_video, otextfile, args.ofile])
     if conv_call != 0:
         print "Ocurrió un error durante la conversión de la salida a video"
         exit(1)
