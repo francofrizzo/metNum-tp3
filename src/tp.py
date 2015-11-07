@@ -7,9 +7,13 @@ import os.path
 from subprocess import call
 
 # Settings
-video_to_textfile = "tools/videoToTextfile.py"
-textfile_to_video = "tools/textfileToVideo.py"
-tp_exec = "./tp"
+pathname = os.path.dirname(sys.argv[0])
+if len(pathname) == 0:
+    pathname = "."
+
+video_to_textfile = pathname + "/tools/videoToTextfile.py"
+textfile_to_video = pathname + "/tools/textfileToVideo.py"
+tp_exec = pathname + "/tp"
 
 # Parametros de entrada
 
@@ -64,7 +68,7 @@ if args.timer:
     tp_args.append("-t")
 tp_args.extend([itextfile, otextfile, args.algoritmo, args.cant_cuadros])
 
-tp_call = call(["./tp"] + tp_args)
+tp_call = call([tp_exec] + tp_args)
 if tp_call != 0:
     print "Ocurrió un error durante la ejecución del algoritmo"
     exit(1)
