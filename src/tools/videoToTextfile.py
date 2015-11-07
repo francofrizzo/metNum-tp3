@@ -13,6 +13,9 @@ if len(sys.argv) > 2:
     videoFilename = sys.argv[1]
     textFilename = sys.argv[2]
 
+if len(sys.argv) > 3:
+    salto = int(sys.argv[3])
+
 # Abrimos archivo de video. 
 video = cv2.VideoCapture(videoFilename)
 
