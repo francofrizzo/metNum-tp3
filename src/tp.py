@@ -15,7 +15,7 @@ video_to_textfile = pathname + "/tools/videoToTextfile.py"
 textfile_to_video = pathname + "/tools/textfileToVideo.py"
 tp_exec = pathname + "/tp"
 
-dev_null = open(os.devnull, 'w')
+dev_null = open(os.devnull, 'w') #leer el archivo, w=escritura r=lectura
 
 # Parametros de entrada
 
@@ -47,12 +47,15 @@ args = parser.parse_args()
 if not args.text_in:
     if not args.quiet:
         print "Convirtiendo video a texto para ser procesado..."
-    itextfile = args.ifile + ".txt"
+    if args.saltar == 1:
+        itextfile = args.ifile + ".txt"
+    else:
+        itextfile = args.ifile + "." + str(args.saltar) + ".txt"
     if not os.path.isfile(itextfile):
         if args.quiet:
-            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"], stdout=dev_null)
+            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, str(args.saltar)], stdout=dev_null)
         else:
-            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"])
+            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, str(args.saltar)])
         if conv_call != 0:
             print "Ocurrió un error durante la conversión del video a texto"
             exit(1)
