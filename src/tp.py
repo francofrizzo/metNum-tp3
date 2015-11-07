@@ -15,6 +15,8 @@ video_to_textfile = pathname + "/tools/videoToTextfile.py"
 textfile_to_video = pathname + "/tools/textfileToVideo.py"
 tp_exec = pathname + "/tp"
 
+dev_null = open(os.devnull, 'w')
+
 # Parametros de entrada
 
 parser = argparse.ArgumentParser(description = 'Pasa un video a cámara lenta')
@@ -48,7 +50,7 @@ if not args.text_in:
     itextfile = args.ifile + ".txt"
     if not os.path.isfile(itextfile):
         if args.quiet:
-            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"], stdout='/dev/null')
+            conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"], stdout=dev_null)
         else:
             conv_call = call(["python", video_to_textfile, args.ifile, itextfile, "1"])
         if conv_call != 0:
@@ -86,7 +88,7 @@ if not args.text_out:
     if not args.quiet:
         print "Convirtiendo la salida del algoritmo a video..."
     if args.quiet:
-        conv_call = call(["python", textfile_to_video, otextfile, args.ofile], stdout='/dev/null')
+        conv_call = call(["python", textfile_to_video, otextfile, args.ofile], stdout=dev_null)
     else:
         conv_call = call(["python", textfile_to_video, otextfile, args.ofile])
     if conv_call != 0:
