@@ -50,8 +50,7 @@ for i in 1 2 ; do
     echo "El video '$(dirname $0)/../data/$expnum-$i.avi' ya había sido convertido a texto. Se utilizará la versión existente"
   fi
 
-  printf "1" >> $(dirname $0)/exp3/exp3-tiempo.txt 
-  printf "\n" >> $(dirname $0)/exp3/exp3-tiempo.txt 
+  echo 1 >> $(dirname $0)/exp3/exp3-tiempo.txt 
 
 
   for j in $tamBloques; do
@@ -61,13 +60,12 @@ for i in 1 2 ; do
     #genero los archivos de texto en los que ya les saque cuadros y lo corri con un algoritmo:
     python $(dirname $0)/../tp.py $(dirname $0)/../data/$expnum-$i.avi $(dirname $0)/$expnum/$expnum-$i-$j-texto.txt 2 3 -s 4 -b $j -t --text-out | 
     sed 's/.*: //' |
-    printf "%d" $j >> $(dirname $0)/exp3/exp3-tiempo.txt 
+    echo -n $j >> $(dirname $0)/exp3/exp3-tiempo.txt 
+    echo -n " " >> $(dirname $0)/exp3/exp3-tiempo.txt 
 
-    while IFS= read -r line; do
-            printf " %d" "$line" >> $(dirname $0)/exp3/exp3-tiempo.txt 
+    while IFS=' ' read -r line; do
+            echo $line >> $(dirname $0)/exp3/exp3-tiempo.txt 
     done
-    printf "\n" >> $(dirname $0)/exp3/exp3-tiempo.txt 
-
 
 
     #genero el archivo donde estan los errores cuadraticos medios:
@@ -84,18 +82,27 @@ for i in 1 2 ; do
   
   #Ahora miramos el que es spline sin bloques:
     
-  python $(dirname $0)/../tp.py $(dirname $0)/../data/$expnum-$i.avi $(dirname $0)/$expnum/$expnum-$i-texto.txt 2 3 -s 4 -t --text-out | 
+  python $(dirname $0)/../tp.py $(dirname $0)/../data/$expnum-$i.avi $(dirname $0)/$expnum/$expnum-$i-sinBloque-texto.txt 2 3 -s 4 -t --text-out | 
   sed 's/.*: //' |
   if [$i = 1]; then
     line1=$(head -n 1 exp3-1.avi.txt)
-    printf "%d" line1 >> $(dirname $0)/exp3/exp3-tiempo.txt
+    echo -n "%d" line1 >> $(dirname $0)/exp3/exp3-tiempo.txt
   else 
     line2=$(head -n 1 exp3-2.avi.txt)
-    printf "%d" line2 >> $(dirname $0)/exp3/exp3-tiempo.txt
+    echo -n "%d" line2 >> $(dirname $0)/exp3/exp3-tiempo.txt
   fi
+  echo -n " " >> $(dirname $0)/exp3/exp3-tiempo.txt 
 
   while IFS= read -r line; do
-    printf " %d" "$line" >> $(dirname $0)/exp3/exp3-tiempo.txt 
+    echo " %d" "$line" >> $(dirname $0)/exp3/exp3-tiempo.txt 
   done 
   
+  echo "Calculando error cuadrático medio del sin bloques..."
+
+    python $(dirname $0)/../errorCuadMedio.py $(dirname $0)/../data/$expnum-$i.avi.txt $(dirname $0)/$expnum/$expnum-$i-sinBloque-texto.txt $(dirname $0)/$expnum/$expnum-$i-sinBloques-errorCuadMedio.txt
+
+    echo "Calculando error total del sin bloques..."
+
+    python $(dirname $0)/../errorTotal.py $(dirname $0)/$expnum/$expnum-$i-sinBloque-texto.txt $(dirname $0)/$expnum/$expnum-$i-sinBloques-errorCuadMedio.txt >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
+
 done
