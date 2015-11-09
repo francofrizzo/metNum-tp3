@@ -1,0 +1,37 @@
+{
+    ".deps_version": 2, 
+    "g++ -c ./interpolacion.cpp -o ./interpolacion.o": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "config.h": "input-ee1a70c2c99c6cb5a459891d74a1181f", 
+        "interpolacion.cpp": "input-83ca512cf017acc36803e5a2a8404426", 
+        "interpolacion.h": "input-c2e23be2d13a6ee0f73018c539371771", 
+        "interpolacion.o": "output-bb9013cf090a690be1dd7ea64fffecb1"
+    }, 
+    "g++ -c ./interpolacion.cpp -o ./interpolacion.o -std=c++11": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "config.h": "input-ee1a70c2c99c6cb5a459891d74a1181f", 
+        "interpolacion.cpp": "input-83ca512cf017acc36803e5a2a8404426", 
+        "interpolacion.h": "input-c2e23be2d13a6ee0f73018c539371771", 
+        "interpolacion.o": "output-ece7bf4a3630319eb600de956ffc4444"
+    }, 
+    "g++ -c ./tp.cpp -o ./tp.o": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "config.h": "input-94d598fcf308ec9594567443411c4476", 
+        "interpolacion.h": "input-c2e23be2d13a6ee0f73018c539371771", 
+        "tp.cpp": "input-3e2ed025f319c6362f4e223d5cb4a0e7", 
+        "tp.o": "output-2aadf308dc5b8e1fe120e57e2779675d"
+    }, 
+    "g++ -c ./tp.cpp -o ./tp.o -std=c++11": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "config.h": "input-ee1a70c2c99c6cb5a459891d74a1181f", 
+        "interpolacion.h": "input-c2e23be2d13a6ee0f73018c539371771", 
+        "tp.cpp": "input-64093f040eafbda41cd8b11c4f604abb", 
+        "tp.o": "output-b4794d27dd25221435244602f9d76760"
+    }, 
+    "g++ -o ./tp ./interpolacion.o ./tp.o": {
+        ".": "input-5058f1af8388633f609cadb75a75dc9d", 
+        "interpolacion.o": "input-ece7bf4a3630319eb600de956ffc4444", 
+        "tp": "output-264196f0d1a177a4b7f983b51d9ebe79", 
+        "tp.o": "input-b4794d27dd25221435244602f9d76760"
+    }
+}

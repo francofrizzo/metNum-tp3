@@ -33,11 +33,7 @@ for i in range(0, cant_cuadros - 1):
 	linea1 = errores1.readline()
 	valores1 = linea1.split('\n') #ahora en valores1 tengo una lista de strings ["indice, error"]
 	valores1 = valores1[0]
-	#print valores1
 	valores1 = valores1.split(" ")
-	print valores1
-	#print valores1[1]
-	#print float(valores1[1])
 	suma1 = suma1 + float(valores1[1])
 
 	linea2 = errores2.readline()

@@ -26,7 +26,7 @@ height = video.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT)
 width = video.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH)
 
 if not video.isOpened():
-	print "Error abriendo el archivo de video"
+	print "Error abriendo el archivo de video '" + videoFilename + "'"
 	exit(1)
 
 print 'Info del video:'

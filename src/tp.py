@@ -61,7 +61,7 @@ if not args.text_in:
             exit(1)
     else:
         if not args.quiet:
-            print "El video ya había sido convertido a texto. Se utilizará la versión existente"
+            print "El video '" + args.ifile + "' ya había sido convertido a texto con salto " + str(args.saltar) + ". Se utilizará la versión existente"
 else:
     itextfile = args.ifile
 
