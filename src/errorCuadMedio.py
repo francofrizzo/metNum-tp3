@@ -53,10 +53,21 @@ for k in range(0, cant_cuadros):
 
     cuad_med.append(dif / N)
 
-salida.write(str(cuad_med))
+tam = len(cuad_med)
+salida.write(str(1))
+salida.write("\n")
+
+for i in range(0, tam):
+    iadd = i + 1
+    salida.write(str(iadd))
+    salida.write(" ")
+    salida.write(str(cuad_med[i]))
+    salida.write("\n")
 
 salida.close()
 
+
+#salida.write(str(cuad_med))
 
 
     # algo = readline()
