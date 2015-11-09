@@ -5,16 +5,17 @@
 
 
 % Creación de los gráficos
-filetype='-dpng';
+filetype='-dpdf';
 mkdir('graficos');
 figure;
 
 hold on;
-errorbar(tam_x_a, tiempos_y_a, e_a, '-r');
+h = errorbar(tam_x_a, tiempos_y_a, e_a, '-r');
 errorbar(tam_x_b, tiempos_y_b, e_b, '-g');
 errorbar(tam_x_c, tiempos_y_c, e_c, '-b');
-xlabel('Tamano imagen','FontSize',12);
-ylabel('Tiempo de ejecucion en ciclos de clock','FontSize',10);
+xlabel('Tamano de cuadro en pixeles','FontSize',12);
+ylabel('Tiempo de ejecucion en ticks de clock','FontSize',10);
 legend('Vecino mas cercano','Lineal','Spline','Location','northwest');
+set(get(h, 'Parent'), 'YScale', 'log');
 hold off;
 print('graficos/exp1b', filetype);

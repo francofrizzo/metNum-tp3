@@ -3,8 +3,8 @@
 LC_NUMERIC="en_US.UTF-8"
 
 iteraciones=1
-duracion="5 10 15"
-algoritmos="0 1 2"
+duracion="5 10 15" 
+algoritmos="0 1 2" 
 
 while getopts 'cha:' opt; do
   case $opt in
@@ -45,7 +45,9 @@ for i in $algoritmos; do
         while IFS= read -r line; do
           printf " %d" "$line" >> $(dirname $0)/exp1/exp1-a-$i.txt 
         done
+        rm $(dirname $0)/exp1/exp1-a-$k-out$i.txt
     done
+
     printf "\n" >> $(dirname $0)/exp1/exp1-a-$i.txt
   done
 done
