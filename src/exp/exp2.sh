@@ -52,6 +52,10 @@ for i in 1 2 3; do
     echo "El video '$(dirname $0)/../data/$expnum-$i.avi' ya había sido convertido a texto. Se utilizará la versión existente"
   fi
 
+
+
+  echo "1" >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
+
   for j in 0 1 2; do
 
     # genero los archivos de texto en los que ya les saque cuadros y lo corri con un algoritmo:
@@ -69,6 +73,10 @@ for i in 1 2 3; do
     #calculamos el error total:
     
     echo "Calculando error total..."
+
+    echo -n "$j" >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
+    echo -n " " >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
+
 
     python $(dirname $0)/../errorTotal.py $(dirname $0)/$expnum/$expnum-$i-$j-texto.txt $(dirname $0)/$expnum/$expnum-$i-$j-errorCuadMedio.txt >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
   
