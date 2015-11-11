@@ -1,28 +1,8 @@
-\section{Introduccion}
-    Un problema matemático que aparece repetidamente en diferentes contextos es el de la \emph{interpolación}. Conociendo un conjunto de pares de valores $(x_i, y_i)$, se trata de encontrar una función $f(x) = y$ que cumpla $f(x_i) =_ yi$ para todos estos pares. Entre las múltiples aplicaciones que tiene la resolución de este problema, se encuentra el de aplicar a videos el efecto de cámara lenta o \emph{slow motion}, que resulta útil para la producción de peliculas, transmisiones deportivas y aplicaciones cientificas, entre otros.
+\section{Introducción}
+    Un problema matemático que aparece repetidamente en diferentes contextos es el de la \emph{interpolación}, que consiste en hallar una función que se ajuste a un determinado conjunto de datos. Entre las múltiples aplicaciones que tiene la resolución de este problema, se encuentra el de aplicar a videos el efecto de cámara lenta o \emph{slow motion}, que resulta útil para la producción de peliculas, transmisiones deportivas y aplicaciones cientificas, entre otros.
 
     Un video no es otra cosa que una sucesión de imágenes (cuadros o \emph{frames}) en función del tiempo, cada una de las cuales consiste en una matriz de píxeles. El efecto de movimiento se consigue reproduciendo una determinada cantidad de estas imágenes por segundo; a esta cantidad se la denomina el \emph{framerate} del video, y habitualmente es de entre 24 y 30 cuadros por segundo.
 
     Para filmar videos en \emph{slow motion}, se utilizan cámaras capaces de capturar una cantidad mucho mayor de cuadros por segundo (más de 100, en general), y luego se los reproduce a una velocidad normal. Si lo que se desea es obtener un video en cámara lenta a partir de uno normal, pueden intercalarse nuevos cuadros entre los ya existentes; para esto, es necesario utilizar alguna técnica para ``inventar'' la información correspondiente a los cuadros faltantes. Aquí es donde entra en juego la interpolación: si encontramos una función que interpole correctamente la información de los frames que conocemos, podemos calcular el valor de los nuevos evaluando esta función en instantes de tiempo intermedios.
 
     En el transcurso de este trabajo, evaluaremos diferentes métodos que nos permitan lograr este objetivo, analizando su desempeño tanto desde el punto de vista de la performance como del de la calidad de los resultados obtenidos, y teniendo en cuenta estos datos para estudiar su aplicabilidad frente a diferentes contextos de uso.
-
-    \begin{center}
-      \includegraphics{graficos/fig1.pdf}
-    \end{center}
-
-    \begin{center}
-      \includegraphics{graficos/fig2.pdf}
-    \end{center}
-
-    \begin{center}
-      \includegraphics{graficos/fig3.pdf}
-    \end{center}
-
-        \begin{center}
-      \includegraphics{graficos/fig4.pdf}
-    \end{center}
-
-        \begin{center}
-      \includegraphics{graficos/fig5.pdf}
-    \end{center}

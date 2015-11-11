@@ -1,28 +1,124 @@
 \section{Desarrollo}
-    
-    \subsection{Conceptos teóricos}
+  
+  \subsection{Conceptos teóricos}
 
-    \subsection{Métodos utilizados}
+    Conocemos como \emph{interpolación} al proceso de hallar una función $f(x) = y$ que, dado un conjunto de puntos o pares de valores $(x_k, y_k)$, cumpla $f(x_k) = y_k$ para todos estos puntos. En ciertos casos, además, es deseable que esta función cuente con determinadas propiedades, requeridas por el contexto de aplicación particular; por ejemplo, puede buscarse que sea continua o diferenciable.
 
-    \subsection{Implementación}
+    Existen diversos enfoques para la resolución de este problema. Uno de los más comunes es la denominada \emph{interpolación polinómica}, donde se busca encontrar un polinomio que se ajuste a los puntos dados, procurando, en general, que sea del menor grado posible. Como se detalla extensamente en \cite[sección 3.1]{Burden}, dado un conjunto de $n$ pares de valores reales, se puede demostrar la existencia de un único polinomio interpolador para todos ellos de grado menor o igual a $n$, conocido como el \emph{polinomio de Lagrange}.
+
+    No obstante, la interpolación polinómica presenta algunas desventajas. En particular, cuando el conjunto de puntos de entrada tiene un tamaño considerable (como es el caso en el contexto de aplicación de este trabajo), la función hallada tiende a presentar fuertes oscilaciones, que puede llevar a obtener resultados no deseados (en \cite[p. 158]{Burden} puede verse un ejemplo de este comportamiento).
+
+    Como un enfoque alternativo ante este inconveniente, se presenta la \emph{interpolación segmentaria}. Al igual que antes, se busca interpolar utilizando polinomios, pero en vez de pretender hallar un único polinomio que interpole todos los puntos, se busca uno diferente para cada uno de los segmentos determinados entre dos puntos consecutivos. De esta manera, se tiene un control mucho más fino sobre la función resultante, que permite evitar el comportamiento errático que se obtiene con el polinomio de Lagrange.
+
+    El caso más simple de interpolación segmentaria se da cuando los polinomios buscados en cada segmento son de grado 1; a esta técnica se la conoce como \emph{interpolación lineal}. Para un conjunto de puntos $(x_k, y_k)$, $k = 0, \dots, n$, la función interpoladora se define dentro de cada intervalo $[x_k, x_{k+1}]$ ($k = 0, \dots, n-1$) como
+      \[ f(x) = y_k + \frac{y_{k+1} - y_k}{x_{k+1} - x_k} (x - x_k) \]
+    y resulta continua en todo el intervalo $[x_0, x_n]$, pero no necesariamente derivable cuando $x = x_k$, donde, en general, se presentan ``picos''.
+
+    Dado que esto representa un obstáculo para gran cantidad de aplicaciones, surge la necesidad de buscar variantes más refinadas de interpolación segmentaria. Considerando polinomios de mayor grado, pueden controlarse más sus características, logrando una función que sea diferenciable en todo el dominio de interpolación. En este sentido, es común utilizar polinomios de grado 3, dando lugar a lo que se conoce como \emph{splines} o trazadores cúbicos.
+
+    Dado un conjunto de puntos $(x_k, y_k)$, $k = 0, \dots, n$, un \emph{spline} cúbico interpolador para estos puntos es una función $S$ que satisface las siguientes condiciones:
+
+    \begin{enumerate}[(a)] \setlength{\leftskip}{2em}
+      \item $S(x_k) = y_k$, para $0 \leq i < n$.
+      \item $S_k$, la restricción de $S$ al intervalo $[x_k, x_{k+1}]$, es un polinomio cúbico, para $0 \leq i < n$.
+      \item $S_k'(x_{k+1}) = S_{k+1}'(x_{k+1})$, para $0 \leq i < n - 1$.
+      \item $S_k''(x_{k+1}) = S_{k+1}''(x_{k+1})$, para $0 \leq i < n - 1$.
+      \item $S''(x_0) = S''(x_n) = 0$. (Existen variantes de \emph{splines} donde difiere esta condición, pero no serán relevantes en el contexto de este trabajo; ver \cite[p. 146]{Burden}).
+    \end{enumerate}
+
+    Para hallar una función que satisfaga lo anterior, se define en cada segmento $[x_k, x_{k+1}]$ el polinomio
+      \[ S_k(x) = a_k + b_k (x - x_k) + c_k (x - x_k)^2 + d_k (x - x_k)^3 \]
+    donde $k = 0, \dots, n-1$, y luego se plantea y resuelve el sistema de $4n$ ecuaciones y $4n$ incógnitas (los coeficientes $a_k, b_k, c_k, d_k$) que se desprende de sustituir esta definición de $S_k$ en las condiciones recién enunciadas.
+
+  \subsection{Aplicación y métodos utilizados} 
+    Como se expuso en la Introducción, los conceptos recién presentados resultan de gran utilidad a la hora de resolver el problema de calcular los cuadros a intercalar en un video para aplicarle un efecto de \emph{slow motion}.
+
+    Es importante señalar que, a diferencia de otros contextos relacionados con la edición de imágenes y video, en este caso es importante la variación de cada uno de los píxeles de forma independiente a lo largo del tiempo,  y no la relación entre píxeles contiguos de un mismo cuadro. Por lo tanto, es válido considerar al video de entrada como una \emph{matriz de sucesiones} de píxeles (en lugar de hacerlo como una \emph{sucesión de matrices} de píxeles) y realizar la interpolación sobre cada una de ellas por separado, construyendo luego el video de salida a partir de la matriz formada por todos los resultados individuales obtenidos, tal y como ilustra la Figura \ref{fig:pixeles-indep}.
+
+    \begin{figure}[h]
+      \centering
+
+      \includegraphics{graficos/fig6.pdf} \vspace{1em} \\
+
+      \caption{Interpolación de cada píxel de manera independiente.}
+      \label{fig:pixeles-indep}
+    \end{figure}
+
+    Por otra parte, con el objetivo de simplificar la implementación y experimentación, se utilizaron únicamente videos en escala de grises, teniendo en cuenta que los resultados que se obtendrán serán fácilmente extensibles a videos en color, ya que en estos casos los canales rojo, verde y azul son procesados por separado.
+
+    En adelante, se utilizará la notación $\vid{V}_{ij}$ para referirnos a la sucesión de los valores que toma el píxel ubicado en la fila $i$, columna $j$ del video $\vid{V}$ a lo largo del tiempo. $\vid{V}_{ij}$ será, por lo tanto, una sucesión de valores enteros en el rango $[0, 256)$. Además, con las notaciones $\vid{V}^{(k)}$ y $p^{(k)}$ se hará referencia al $k$-ésimo cuadro del video $\vid{V}$ y al valor del píxel $p$ en el cuadro $k$-ésimo, respectivamente.
+
+    Para resolver el problema de calular los píxeles a intercalar en los videos, se emplearon tres métodos diferentes, que representan variantes de interpolación fragmentaria,\footnote{En rigor, el primero de los métodos considerados no es interpolación segmentaria, dado que la función que se obtiene no es siquiera continua; sin embargo, sigue la idea general de definir de a segmentos la función interpoladora.} con el fin de estudiar su comportamiento, compararlos y evaluar sus ventajas y debilidades.
+
+      \subsubsection{Método ``\emph{vecino más cercano}''}
+        En este método, el más sencillo de los tres considerados, cada uno de los cuadros a generar se construye replicando los valores del cuadro original que se encuentra más próximo en el tiempo.
+
+        Más formalmente, sean $\vid{V}^{(k)}$ y $\vid{V}^{(k+1)}$ dos cuadros contiguos de un video, y supongamos que entre ellos desean intercalarse $c$ nuevos cuadros. Si llamamos a estos \emph{frames} $\vid{V'}^{(r)}$ para $r = 0, \dots, c - 1$, entonces cada uno de ellos cumplirá
+        \begin{alignat*}{3}
+          &\vid{V'}^{(r)} &&= \vid{V}^{(k)} && \qquad \text{si } r < \sfrac{c}{2} \\
+          &\vid{V'}^{(r)} &&= \vid{V}^{(k+1)} && \qquad \text{si } r \geq \sfrac{c}{2}
+        \end{alignat*}
+
+        \begin{figure}[h]
+          \centering
+
+          \includegraphics{graficos/fig3.pdf} \vspace{2em} \\
+          \includegraphics{graficos/fig4.pdf} \vspace{1em} \\
+
+          \caption{Método ``\emph{vecino más cercano}''. Manejo de píxeles centrales.}
+          \label{fig:vecino}
+        \end{figure}
+
+        Nótese el manejo que se produce de los píxeles centrales, ilustrado en la Figura \ref{fig:vecino}. Si la cantidad de \emph{frames} a agregar es par, la mitad de ellos replicarán el píxel inmediato anterior del video original, y la otra mitad el píxel inmediato siguiente. Si, en cambio, la cantidad es impar, el píxel central replicará el píxel inmediato siguiente. Este desbalance se verá compensado al interpolar el par de píxeles siguientes, evitando que se produzcan efectos no deseados.
+
+      \subsubsection{Método de interpolación lineal}
+        Una forma algo más sofisticada de obtener los cuadros buscados es interpolando, entre cada par de \emph{frames} consecutivos, mediante una función lineal. Este método, a diferencia del anterior, ``inventa'' nueva información para llenar el espacio entre los cuadros originales, combinando los datos que estos últimos proporcionan. De esta forma, se espera obtener una trancisión más suave entre los \emph{frames} del video.
+
+        El método, expresado formalmente, intercala $c$ cuadros nuevos entre dos cuadros $\vid{V}^{(k)}$ y $\vid{V}^{(k+1)}$ consecutivos de la siguiente manera: si llamamos $\vid{V'}^{(r)}$ a los cuadros interpolados, para $r = 0, \dots, c - 1$, entonces
+
+        \[ \vid{V'}^{(r)} = \vid{V}^{(k)} + \Delta (r + 1) \]
+        donde
+        \[ \Delta = \frac{\vid{V}^{(k+1)} - \vid{V}^{(k)}}{c + 1} \]
+
+        \begin{figure}[h]
+          \centering
+
+          \includegraphics{graficos/fig5.pdf} \vspace{1em} \\
+
+          \caption{Método de interpolación lineal. Aquí $\Delta = \dfrac{10 - 2}{3 + 1} = 2$.}
+          \label{fig:lineal}
+        \end{figure}
+
+      \subsubsection{Método de interpolación por \emph{splines}}
+        El último de los tres métodos evaluados consiste en utilizar \emph{splines} cúbicos para obtener los valores de los píxeles correspondientes a los cuadros a intercalar. Al igual que el caso anterior, los cuadros intermedios contienen información que no estaba presente en el video original, aunque esta vez se busca aprovechar la diferenciabilidad de los \emph{splines}, propiedad no presente en la interpolación lineal, para obtener resultados más naturales.
+
+        Dado un video con \emph{frames} $\vid{V}^{(0)}, \dots, \vid{V}^{(n)}$, si entre cada par de cuadros quieren agregarse $c$ nuevos cuadros, se procesa cada píxel $p = {V}_{i,j}$ de la siguiente manera: se consideran los puntos $(k, p^{(k)})$ y se construyen los $n$ polinomios cúbicos $S_n$ que interpolan en los segmentos $[k, k+1]$ ($k = 0, \dots, n-1$). Luego, para cada par de cuadros consecutivos $p^{(k)}$, $p^{(k+1)}$ se calcula el valor del píxel en los $c$ cuadros intermedios $p'^{(r)}$, $r = 0, \dots, c-1$, evaluando el polinomio $S_k$ a intervalos regulares, es decir
+        \[ p'^{(r)} = S_k \left(\frac{r}{c+1} \right) \]
+
+        De esta forma, como ya fue explicado (ver Figura \ref{fig:pixeles-indep}), pueden componerse los cuadros a intercalar a partir de calcular, independientemente, el valor de cada uno de sus píxeles.
+
+      \subsubsection*{Variante por bloques}
+
+        Para este último método se consideró también una variante en la que, en lugar de calcular el \emph{spline} utilizando los valores de todos los cuadros, se divide al video en bloques de menor duración, interpolando dentro de cada uno de ellos, y luego se unen los resultados obtenidos. De esta manera, los sistemas de ecuaciones a resolver son más pequeños. Más allá de esto, la alternativa no presenta grandes diferencias desde el punto matemático. Cabe mencionar la forma en que se manejan los casos borde: se hace necesario que los bloques tengan un \emph{frame} solapado en sus extremos (ver Figura \ref{fig:spline-bloques}) porque, en caso contrario, los cuadros a intercalar entre el final de cada bloque y el comienzo del siguiente no se calcularían como parte de ninguno de ellos.
+
+        \begin{figure}[h]
+          \centering
+
+          \includegraphics{graficos/fig2.pdf} \vspace{1em} \\
+
+          \caption{División del video en bloques para su procesamiento.}
+          \label{fig:spline-bloques}
+        \end{figure}
 
 
-    \begin{center}
-      \includegraphics{graficos/fig1.pdf}
-    \end{center}
+  \subsection{Implementación}
 
-    \begin{center}
-      \includegraphics{graficos/fig2.pdf}
-    \end{center}
+    Todos los métodos fueron implementados en lenguaje \texttt{C++}. Internamente, el video es considerado como una matriz tridimensional, donde la primeras dos dimensiones corresponden a la ubicación de los píxeles (fila y columna), mientras que la tercera a los \emph{frames} que componen el video. De esta manera, en los tres casos se itera sobre los píxeles del video, procesándolos de manera independiente según el algoritmo correspondiente, para luego unir los resultados nuevamente y producir el video final.
 
-    \begin{center}
-      \includegraphics{graficos/fig3.pdf}
-    \end{center}
+    La implementación de los métodos ``\emph{vecino más cercano}'' y de interpolación lineal son inmediatas, ya que se limitan a aplicar repetidamente las fórmulas enunciadas en la subsección anterior, por lo que no se considera necesario brindar más detalles sobre las mismas.
 
-        \begin{center}
-      \includegraphics{graficos/fig4.pdf}
-    \end{center}
+    En cuanto al método de interpolación por \emph{splines}, se barajaron diferentes alternativas para su implementación. En una primera instancia, se planteó la posibilidad de utilizar algoritmos para la resolución de sistemas de ecuaciones en general, como los de Eliminación Gaussiana o Factorización LU. Finalmente, se decidió aprovechar el hecho de que el sistema a resolver presenta características muy particulares y puede ser ampliamente simplificado, y se implementó un algoritmo iterativo, extraído de \cite[Algoritmo 3.4]{Burden}, cuyo pseudocódigo puede leerse en el Apéndice A.
 
-        \begin{center}
-      \includegraphics{graficos/fig5.pdf}
-    \end{center}
+    \subsubsection{Verificación de la correctitud de la implementación}
+
+    Para asegurar que los métodos estén bien implementados se tomará un video compuesto por dos cuadros con cuatro filas y cuatro columnas cada uno y se aplicarán los 3 algoritmos para interpolar generando 2 cuadros intermedios. Luego se compararán los resultados obtenidos con los que debían haber dado. Para el método de vecino mas cercano los valores de los píxeles del primer cuadro generado deben coincidir con los del primer cuadro del video original, mientras que los del segundo deberán coincidir con los del segundo video. Para el método de interpolación lineal se calculará el módulo de la diferencia entre los píxeles de los cuadros originales, luego se la dividirá por la cantidad la cantidad de cuadros incrementada en uno y se redondeará el valor obtenido. Llamemos a este valor dif. Luego sumamos dif a cada uno de los píxeles del primer cuadro original. Éste cuadro obtenido debe coincidir con el primero generado por el método. Luego sumamos dif a este cuadro y así obtenemos el segundo generado. Para el método splines, al tener solamente dos cuadros, la función que va a tomar para realizar la interpolación será un función lineal por lo tanto deberían coincidir los valores de los píxeles de los cuadros generados con los generados por la interpolación lineal.

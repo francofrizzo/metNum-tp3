@@ -28,6 +28,7 @@
 \usepackage[usenames,dvipsnames]{color} % Autoexplicativo
 \usepackage{caption} % Captions sin números
 \usepackage{multirow}
+\usepackage{xfrac} % dfrac
 \usepackage{caratula} % Carátula del DC
 \usepackage{url}
 
@@ -46,6 +47,7 @@
     \newtheorem{obs}{Observación}
 \setlength{\parskip}{.3em}
 \newcommand{\acr}[1]{\textsc{\lowercase{#1}}} % Acrónimos
+\newcommand{\vid}[1]{\ensuremath{\mathbf{#1}}}
 
 % Encabezado
 \lhead{Métodos Numéricos}
@@ -75,10 +77,10 @@
 \begin{addmargin}[4em]{4em}
 
 \section*{\centering Resumen}
-(Resumen)
+En el presente trabajo, se explora la aplicación de diferentes técnicas de interpolación segmentaria para la aplicación de un efecto de \emph{slow motion} (cámara lenta) a secuencias de video. Se evalúan como alternativas la utilización de funciones constantes y lineales de a trozos y de \emph{splines} cúbicos, y se realizan pruebas experimentales con cada una de ellas, con el fin de comparar su desempeño tanto desde el punto de vista de la eficiencia como de la calidad de los resultados arrojados, y de extraer conclusiones sobre la conveniencia de la utilización de una u otra en función de las características del video a procesar.
 
 \vspace{4em}
-\noindent \strong{Palabras clave:} (palabras clave)
+\noindent \strong{Palabras clave:} interpolación, \emph{splines}, \emph{slow motion}, edición de video
 
 \end{addmargin}
 \clearpage
@@ -99,7 +101,9 @@
 
 % Apéndices
 \begin{appendices}
-    \input{apendices/a-enunciado}
+    \input{apendices/a-pseudocodigo-splines}
+    \clearpage
+    \input{apendices/b-enunciado}
     \clearpage
 \end{appendices}
 \clearpage
