@@ -1,1 +1,165 @@
 \section{Experimentación y discusión}
+
+    A continuación, se presentan las pruebas experimentales que se realizaron con el fin de evaluar y comparar los diferentes métodos ya presentados, junto con los resultados obtenidos y una discusión de los mismos.
+
+    Todos los experimentos se ejecutaron en las computadoras del laboratorio 4 del Departamento de Computación (\acr{FCEN} - \acr{UBA}). Como datos de entrada para las pruebas, se seleccionaron videos extraidos de la serie de televisión estadounidense \emph{Friends}, teniendo en cuenta características que los hacían apropiados para poner a prueba diferentes aspectos de cada algoritmo. Los videos utilizados se incluyen con los archivos fuentes del trabajo en el directorio \texttt{data}; por otra parte, el directorio \texttt{exp} contiene una serie de scripts en lenguaje Bash que permite reproducir los experimentos.
+
+    \subsection{Experimento 1: Pruebas de rendimiento}
+
+        \subsubsection*{Presentación}
+
+            Este experimento se realizó con el objetivo de este experimento de comparar el rendimiento entre los métodos ``\emph{vecino más cercano}'', interpolación lineal e interpolación por \emph{splines}, teniendo en cuenta el tiempo insumido para la ejecución de cada uno de ellos. Se realizaron dos tipos de pruebas:
+
+            \begin{enumerate}[(a)]
+                \item Rendimiento en función de la duración del video de entrada.
+                \item Rendimiento en función del tamaño en píxeles del video de entrada.
+            \end{enumerate}
+
+            Para ello primero se variará la duración del video dejando como constante el tamaño y para cada una de las duraciones se medirá el tiempo de ejecución de cada uno de los métodos. Luego se dejará constante el tiempo de duración y se variará el tamaño del video. Con el fin de mejorar la precisión de los resultados y evitar posibles interferencias (por ejemplo, las generadas por otras tareas que puedan estar ejecutando la computadora) cada medición se repitió 10 veces, tomando luego el promedio de los datos obtenidos.
+
+            En cuanto al método de \emph{splines}, el rendimiento de la variante del mismo que procesa el video dividiéndolo en bloques de menor tamaño se dejó para ser evaluado en experimentos posteriores.
+
+        \subsubsection*{Datos de entrada}
+
+        Datos:
+
+            Para realizar las pruebas, se utilizaron los siguientes 6 videos de entrada:
+
+            \begin{enumerate}[(a)]
+                \item Para analizar el tiempo de ejecución según la duración del video, se consideró un video de 15 segundos de duración (\texttt{exp1-a-15.avi}), que fue cortado para generar otros dos casos de prueba de 10 segundos (\texttt{exp1-a-10.avi}) y 5 segundos (\texttt{exp1-a-5.avi}).
+                \item Para analizar el tiempo de ejecución según el tamaño en píxeles del video, se consideró un video de $352 \times 264 = 92928$ píxeles (\texttt{exp1-b-1.avi}), a partir del cual se generaron dos versiones reducidas de $176 \times 123 = 23232$ (\texttt{exp1-b-2.avi}) y $ 120 \times 90 = 10800$ (\texttt{exp1-b-3.avi}).
+            \end{enumerate}
+
+            En ambos casos, las medidas se eligieron de forma arbitraria, procurando que los casos de prueba no fueran excesivamente grandes para no prolongar innecesariamente la duración de las pruebas. Como cantidad de cuadros a intercalar se eligió 3, número elegido arbitrariamente, ya que no se consideró que este parámetro fuera de relevancia para el experimento.
+
+        \subsubsection*{Hipótesis}
+
+            Teniendo en cuenta la complejidad de las operaciones requeridas por cada uno de los métodos, la hipótesis fue que el método mas eficiente sería ``\emph{vecino más cercano}'', seguido por el de interpolación lineal y por ultimo el de \emph{splines}. En particular, el método ``\emph{vecino más cercano}'' se limita a copiar valores, casi sin realizar opreaciones adicionales; el de interpolación lineal debe realizar operaciones matemáticas sencillas sobre los valores, mientras que el de interpolación por \emph{splines} debe resolver un sistema de ecuaciones considerablemente más complejo.
+
+            Por otra parte, considerando que los píxeles del video se procesan de manera independiente, se consideró esperable que el tiempo de ejecución aumentara linealmente con la cantidad de píxeles del video de entrada. Además, dado que los tres algoritmos realizan iteraciones simples sobre los \emph{frames} del video de entrada, y tras realizar un sencillo análisis de complejidad de los mismos, se elaboró la hipótesis de que el tiempo de ejecución de los tres variaría también linealmente con la longitud del video de entrada.
+
+        \subsubsection*{Resultados}
+
+        \subsubsection*{Discusión}
+
+            Como se puede observar en los resultados, pudo verificarse la hipótesis, ya que tanto al comparar el tiempo de ejecución con respecto al tamaño de los cuadros como cuando se lo compara con diferentes duraciones de videos, el método de ``\emph{vecino más cercano}'' es el más eficiente, seguido del de interpolación lineal y luego el de interpolación por \emph{splines}.
+
+            A partir del análisis de los resultados y la observación de los gráficos, se llegó a la conclusión de que la hipótesis de la complejidad lineal de los algoritmos queda claramente confirmada, como puede observarse en los gráficos; no se considera necesario agregar más pruebas con videos de diferentes tamaños ni de diferente duración.
+
+
+    \subsection{Experimento 2: Comparación de resultados con videos reales}
+
+        \subsubsection*{Presentación}
+
+            El objetivo de este experimento fue contrastar los resultados arrojados por cada algoritmo con un video real. La metodología consistió en tomar el video original, eliminar una cierta cantidad de cuadros y luego recrearlos con cada uno de los algoritmos, para así observar cuál logró una mejor aproximación de la solución real. Como métrica de este último valor, se consideró el error cuadrático medio (ECM) \emph{frame} a \emph{frame}, definido para cada cuadro del video como
+
+            \[ \text{ECM} \left( \vid{V}^{(k)}, \vid{V'}^{(k)} \right) = \frac{1}{mn} \sum_{i=1}^m\sum_{j = 1}^n \left( \vid{V}^{(k)}_{ij}, \vid{V'}^{(k)}_{ij} \right)^2 \]
+
+            donde $m$ es la cantidad de filas y $n$ la cantidad de columnas del video, y se calculó también el \emph{error total}, definido como
+
+            \[ \text{E} \left( \vid{V}, \vid{V'} \right) = \frac{1}{G} \sum_{k=0}^N \text{ECM} \left( \vid{V}^{(k)}, \vid{V'}^{(k)} \right) \]
+
+            donde $N$ es la cantidad total de frames del video original, y $G$ es la cantidad de cuadros del total que fueron generados artificialmente (se consideró este último valor para el cociente, en lugar de $N$, para evitar considerar en la métrica los cuadros que no fueron producidos por el algoritmo).
+
+        \subsubsection*{Datos de entrada}
+
+            Se tomaron dos casos diferentes de prueba. Para el primero (\texttt{exp2-1.avi}), se eligió un video suave, sin saltos bruscos de escena; en la primera parte del video hay movimiento en la primer mitad del video y en el final no. El segundo video (\texttt{exp2-2.avi}) presenta una primera parte con movimiento de cámara, luego un intervalo casi sin movimiento de imagen, y cerca del final, un corte de escena.
+
+            En ambos casos se eliminaron tres de cada cuatro cuadros del video original, procediendo luego a replicarlos con cada uno de los algoritmos a evaluar.
+
+        \subsubsection*{Hipótesis}
+
+            El experimento se realizó bajo la hipótesis de que la mejor aproximación al video original sería la del método de \emph{splines}, dado que, para cada píxel, considera una mayor cantidad de valores a lo largo del tiempo y genera una función diferenciable, que cabe esperar que se parezca más al movimiento natural presente en un video. Los otros dos métodos, en cambio, no devuelven resultados ``suaves''; el método de interpolación lineal, solo toma 2 valores consecutivos del píxel para generar el nuevo cuadro, y el de vecino mas cercano se limita a replicar cuadros ya existentes, con lo que cabe esperar que produzca videos con saltos bruscos entre imágenes fijas, teniendo un desempeño pobre a la hora de producir impresión de movimiento.
+
+        \subsubsection*{Resultados}
+
+
+        \subsubsection*{Discusión}
+
+            Del análisis de los valores obtenidos para el \emph{error total}, pudo desprenderse que, para ambos videos, el método menos preciso es ``vecino más cercano''. No obstante, de forma contraria a lo esperado, se halló que la interpolación lineal aproxima mejor al video original que el método de \emph{splines}. Dado que existe la posibilidad de que este resultado se deba a las características particulares de los videos elegidos, se considera pendiente para experimentos futuros corroborar este comportamiento y determinar la razón por la que ocurren estas diferencias.
+
+            Observando el comportamiento del error cuadrático medio a lo largo de ambos videos se pudo notar que, como cabía esperar, uno de cada cuatro cuadros arroja un error cuadrático medio nulo; esto se debe, evidentemente, a que este cuadro mo es generado artificialmente, sino copiado directamente del video original.
+
+            Es posible notar, en los 3 métodos, que en los resultados del primer video el error es considerablemente mayor durante los momentos iniciales del video, donde se observan personas en movimiento pasando por delante de la protagonista; por el contrario, cerca del final, cuando en el video solo se encuentra la protagonista, con poco movimiento, el error cuadrático medio de los cuadros disminuye notoriamente.
+
+            Con los resultados del segundo video se pudo ver claramente que, de nuevo, el momento donde hay más diferencia entre los valores reales del cuadro y los valores del cuadro generado es cuando la cámara se encuentra en movimiento. Luego, cuando esta queda fija por un tiempo, el error disminuye notoriamente. Al final del video, se observó un pico brusco en los valores del error, que coincide con un cambio total de escena. Es relevante notar que para el método ``vecino más cercano'' hay un solo cuadro con una enorme diferencia; para interpolación lineal, hay más cuadros afectados pero presentan un error menor. En el método de \emph{splines}, los cuadros afectados son aún más. Esto coincide con la naturaleza de los métodos, y resulta esperable teniendo en cuenta la cantidad de frames que considera cada uno de ellos para calcular los que son agregados.
+
+            Partiendo del supuesto de que este pico en el valor del error cuadrático medio se produjo debido a la gran variación repentina en los valores de los píxeles, se realizó un nuevo experimento para profundizar esta idea.
+
+    \subsubsection{Experimento 2, bis: Análisis de cambios bruscos de escena}
+
+        \subsubsection*{Presentación}
+
+            En este experimento se buscó aislar la situación del experimento anterior donde se produjo un cambio brusco de escena, para confirmar la idea de que, ante esta situación, la medición de error con respecto al video real se dispara.
+
+        \subsubsection*{Datos de entrada}
+
+            Se utilizó el video \emph{exp2-3.avi}, que consiste simplemente en dos imágenes estáticas con fondo blanco, con un corte brusco al pasar de una a la otra. Se eliminaron 3 cuadros del video original, siendo luego recreados por medio de los tres métodos.
+
+        \subsubsection*{Hipótesis}
+
+            Se partió de la hipótesis de que, en el momento donde cambia la foto, el ECM tomará valores muy elevados, resultando nulo en el resto del video.
+
+        \subsubsection*{Discusión}
+
+            Como se puede observar en los gráficos, se obtuvo un ECM nulo cuando el video se corresponde con la imagen fija; en el momento en el que ésta cambia, el ECM toma valores mayores. En el método de vecino mas cercano, solo dos cuadros presentan un error no nulo, pero este presenta valores muy elevados. Esto se debe a que, dadas las características del método, el corte brusco de escena se reproduce, pero en un momento erróneo. De esta forma, los cuadros que no coinciden son completamente diferentes, arrojando valores de error más altos que los de los demás métodos. Cabe destacar que, más allá de esto, el video producido por este procedimiento es el que mejor aproxima visualmente al video original.
+
+            En el método de interpolación lineal, en lugar del corte brusco de escena, se obtuvo una fusión suave entre las dos imágenes, a lo largo de los tres cuadros producidos por la interpolación. Esto se vio claramente reflejado en el análisis del error cuadrático medio.
+
+            Con \emph{splines} el resultado obtenido fue similar, pero dado que la función interpoladora se ve afectada por una cantidad más grande de cuadros del video, el error se presenta distribuido a lo largo de un intervalo mayor.
+
+            En los momentos donde la imagen se mantiene constante, en los 3 métodos, el error cuadrático medio es nulo, reflejando el hecho de que al interpolar entre dos cuadros iguales, ambos métodos generan una serie de cuadros iguales a los dos entre los que se realiza la interpolación.
+
+    \subsection{Experimento 3: Análisis de la variante por bloques del método de \emph{splines}}
+
+        \subsubsection*{Presentación}
+
+            En este experimento se comparararon los algoritmos de \emph{splines} con y sin bloques y se estudió su aproximación a la solución real. La metodología fue idéntica a la del experimento 2, pero se generaron los nuevos videos ejecutando el método de \emph{splines} con diferentes tamaños de bloques.
+
+            También se analizó el tiempo de ejecución para el método de \emph{splines} con diferentes tamaños de bloques y sin utilizar bloques en absoluto. En este caso la metodología fue idéntica a la del experimento 1, realizando 10 repeticiones de cada medición para evitar posibles interferencias.
+
+            \subsubsection*{Datos de entrada}
+
+            Se utilizaron dos videos, ya empleados en el experimento anterior: el primero (\emph{exp2-1.avi}) con mucho movimiento en la primer mitad del video y poco hacia el final, y el segundo (\emph{exp2-2.avi}), con movimiento de cámara al comienzo, luego un intervalo con la cámara prácticamente fija, sin movimiento de imagen, y al final un cambio brusco de escena.
+
+            En ambos casos se eliminaron tres de cada cuatro cuadros del video original, procediendo luego a replicarlos con cada uno de los algoritmos a evaluar.
+
+            En una primera instancia, el experimento se realizó tomando tamaños de bloques grandes, mayores que 20. Dado que los resultados obtenidos se consideraron poco relevantes, ya que las diferencias entre los valores del error promediado para los diferentes tamaños de bloques eran mínimas, se decidió experimentar considerando tamaños de bloques más pequeños. Los valores finalmente empleados fueron los siguientes: 2, 4, 6, 8, 10, 12, 14, 50, 80, 100, 130, 170.
+
+            \subsubsection*{Hipótesis}
+
+            Se partió de la hipótesis de que la mejor aproximación al video original sería la del método de \emph{splines} sin bloques, ya que para interpolar se tiene en cuenta más información, tomando valores a lo largo de más cuadros. Se consideró esperable que los resultados difirieran solamente alrededor de los puntos de corte de los bloques, habiendo pocas diferencias en las zonas centrales de los mismos, lo cual provocaría que los resultados con bloques grandes fueran bastante similares a los obtenidos al ejecutar el método sin utilizar bloques.
+
+            Se supuso que comparando los tiempos de ejecución entre los diferentes tamaños de bloques, por la forma en la que fue implementado el método, con más bloques sería mayor el tiempo de ejecución; dado a que la división en bloques genera que haya cuadros que se procesen dos veces, ya que los bloques tienen un solapamiento de un \emph{frame} en los extremos. Así, la cantidad de cuadros a procesar se incrementaría en tantos bloques como entraran en el video. Si el método hubiera sido implementado resolviendo el sistema a través de un algoritmo diferente, como fue evaluado en un primer monento, el método de splines podría no haber resultado lineal en la cantidad de cuadros considerados; en tal caso, la división en bloques podría haber representado una importante mejora de rendimiento.
+
+            \subsubsection*{Resultados}
+
+
+            \subsubsection*{Discusión}
+
+            En el caso del spline en el cual se toma un tamaño de bloque muy cercano al de la cantidad de cuadros del video, el error que se genera en los píxeles que quedan es tan chico que en el error total queda igual que cuando no se divide por bloques. Para el resto de los tamaños las diferencias entre los errores es mínima y va variando dependiendo del tamaño sin poder asegurar que cuanto mas chicos sean los bloques mayor será la diferencia. Dejamos para experimentos futuros observar por que suceden estas diferencias.
+
+            Se puede observar que cuanto menor sea el tamaño de los bloques, el tiempo de ejecución del algoritmo será mayor. Esto se debe a que a medida que aumentamos la cantidad de bloques que haya en el video, mayor será la cantidad de cuadros a analizar ya que el cuadro que se encuentra entre dos bloques deberá ser utilizado para generar la función interpoladora en ambos dos.
+
+    \subsection{Análisis cualitativo de los resultados obtenidos}
+
+            Además de los experimentos ya expuestos, se realizó un estudio cualitativo (inevitablemente subjetivo) de los \emph{artifacts}, es decir, los errores visuales, producidos por cada uno de los métodos analizados. Se tomaron dos videos, uno con y uno sin movimientos bruscos de cámara, eliminando en ambos casos una cierta cantidad de cuadros para luego recrearlos por medio de los tres métodos y realizar el análisis cualitativo sobre estos resultados.
+
+            \subsubsection*{Datos de entrada}
+
+                Se utilizaron dos videos, ya empleados en los experimentos anteriores: el primero (\emph{exp2-1.avi}) con mucho movimiento en la primer mitad del video y poco hacia el final, y el segundo (\emph{exp2-2.avi}), con movimiento de cámara al comienzo, luego un intervalo con la cámara prácticamente fija, sin movimiento de imagen, y al final un cambio brusco de escena.
+
+                En ambos casos se eliminaron tres de cada cuatro cuadros del video original, procediendo luego a replicarlos con cada uno de los algoritmos a evaluar.
+
+            \subsubsection*{Hipótesis}
+
+                La hipótesis fue que en el video generado con el método de vecino más cercano se vería la imagen congelada por momentos, y el movimiento se daría a través de pequeños saltos, ya que este algoritmo simplemente copia los cuadros ya existentes, haciendo que se muestren por un mayor intervalo de tiempo, y sin suavizar en forma alguna la transición entre ellos. Dado que no se genera información nueva, no se esperó la aparición de \emph{artifacts} de ningún tipo.
+
+                En el método de interpolación lineal, se supuso que se generarían \emph{artifacts} en los momentos en que hubiera movimientos bruscos, ya que para interpolar se toman de a dos cuadros del video original, generando cuadros con una fusión de imágenes diferentes, lo cual puede llevar a la aparición de defectos. Al interpolar con el método de \emph{splines} se conjeturó que se obtendría un resultado similar, pero teniendo en cuenta la posibilidad de que los \emph{artifacts} fueran más notorios, dado que la interpolación considera una cantidad de \emph{frames} mayor, pudiendo exagerar el efecto recién mencionado.
+
+
+            \subsubsection*{Discusión}
+
+                En el primer video, las versiones generadas por los métodos de interpolación lineal y por \emph{splines} mostraron defectos en los \emph{frames} donde pasan personas caminando, ya que por momentos se las ve dobles o con partes del cuerpo duplicadas; lo mismo ocurrió con el segundo video, donde al moverse la cámara las personas y el fondo parecen duplicarse. En los videos generados por el método de vecino mas cercano este efecto no se produce, pero si se observó que el video parece detenerse por momentos, dando la sensación de que la reproducción está ``trabada''.
+
+                Al tomar los videos generados por los métodos de interpolación lineal y \emph{splines} y observarlos cuadro a cuadro, se pudo observar ver que existen cuadros donde no se detectan \emph{artifacts}; estos cuadros son los copiados desde el video original, donde, al igual que el método ``vecino más cercano'', no se produjeron perturbaciones.
