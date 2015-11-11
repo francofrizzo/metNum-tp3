@@ -54,7 +54,7 @@ for i in 1 2 ; do
   fi
 
   echo $iteraciones >> $(dirname $0)/$expnum/$expnum-$i-tiempo.txt 
-  echo "$a" >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
+  echo "1" >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
 
   for j in $tamBloques; do
 

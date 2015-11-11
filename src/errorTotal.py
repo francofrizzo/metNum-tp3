@@ -15,6 +15,9 @@ errores = open(sys.argv[2], 'r')
 errores.readline()
 
 cant_cuadros = int(video.readline())
+cant_a_generar = 3
+
+cuentita = ((cant_cuadros - 1) / (cant_a_generar + 1)) * cant_a_generar
 
 suma = 0
 
