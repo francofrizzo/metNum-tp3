@@ -21,12 +21,10 @@
 
         \subsubsection*{Datos de entrada}
 
-        Datos:
-
             Para realizar las pruebas, se utilizaron los siguientes 6 videos de entrada:
 
             \begin{enumerate}[(a)]
-                \item Para analizar el tiempo de ejecución según la duración del video, se consideró un video de 15 segundos de duración (\texttt{exp1-a-15.avi}), que fue cortado para generar otros dos casos de prueba de 10 segundos (\texttt{exp1-a-10.avi}) y 5 segundos (\texttt{exp1-a-5.avi}).
+                \item Para analizar el tiempo de ejecución según la duración del video, se consideró un video de 378 cuadros (15 segundos de duración) (\texttt{exp1-a-15.avi}), que fue cortado para generar otros dos casos de prueba de 253 cuadros (10 segundos) (\texttt{exp1-a-10.avi}) y 127 cuadros (5 segundos) (\texttt{exp1-a-5.avi}).
                 \item Para analizar el tiempo de ejecución según el tamaño en píxeles del video, se consideró un video de $352 \times 264 = 92928$ píxeles (\texttt{exp1-b-1.avi}), a partir del cual se generaron dos versiones reducidas de $176 \times 123 = 23232$ (\texttt{exp1-b-2.avi}) y $ 120 \times 90 = 10800$ (\texttt{exp1-b-3.avi}).
             \end{enumerate}
 
@@ -104,7 +102,7 @@
 
             Como se puede observar en los gráficos, se obtuvo un ECM nulo cuando el video se corresponde con la imagen fija; en el momento en el que ésta cambia, el ECM toma valores mayores. En el método de vecino mas cercano, solo dos cuadros presentan un error no nulo, pero este presenta valores muy elevados. Esto se debe a que, dadas las características del método, el corte brusco de escena se reproduce, pero en un momento erróneo. De esta forma, los cuadros que no coinciden son completamente diferentes, arrojando valores de error más altos que los de los demás métodos. Cabe destacar que, más allá de esto, el video producido por este procedimiento es el que mejor aproxima visualmente al video original.
 
-            En el método de interpolación lineal, en lugar del corte brusco de escena, se obtuvo una fusión suave entre las dos imágenes, a lo largo de los tres cuadros producidos por la interpolación. Esto se vio claramente reflejado en el análisis del error cuadrático medio.
+            En el método de interpolación lineal, en lugar del corte brusco de escena, se obtuvo una fusión suave entre las dos imágenes a lo largo de los tres cuadros producidos por la interpolación. Esto se vio claramente reflejado en el análisis del error cuadrático medio.
 
             Con \emph{splines} el resultado obtenido fue similar, pero dado que la función interpoladora se ve afectada por una cantidad más grande de cuadros del video, el error se presenta distribuido a lo largo de un intervalo mayor.
 
@@ -163,3 +161,5 @@
                 En el primer video, las versiones generadas por los métodos de interpolación lineal y por \emph{splines} mostraron defectos en los \emph{frames} donde pasan personas caminando, ya que por momentos se las ve dobles o con partes del cuerpo duplicadas; lo mismo ocurrió con el segundo video, donde al moverse la cámara las personas y el fondo parecen duplicarse. En los videos generados por el método de vecino mas cercano este efecto no se produce, pero si se observó que el video parece detenerse por momentos, dando la sensación de que la reproducción está ``trabada''.
 
                 Al tomar los videos generados por los métodos de interpolación lineal y \emph{splines} y observarlos cuadro a cuadro, se pudo observar ver que existen cuadros donde no se detectan \emph{artifacts}; estos cuadros son los copiados desde el video original, donde, al igual que el método ``vecino más cercano'', no se produjeron perturbaciones.
+
+                % Si se comparan cualitativamente los resultados arrojados por los métodos de interpolación lineal y por \emph{splines}, puede apreciarse que, en el primero, 
