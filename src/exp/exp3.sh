@@ -7,7 +7,8 @@ expnum="exp3"
 iteraciones=1
 
 #tamBloques="$(seq 10 10 120)"
-tamBloques="$(seq 2 2 15) 170"
+tamBloques="$(seq 2 2 15) 50 80 100 130 170"
+
 
 while getopts 'cha:' opt; do
   case $opt in
@@ -54,7 +55,7 @@ for i in 1 2 ; do
   fi
 
   echo $iteraciones >> $(dirname $0)/$expnum/$expnum-$i-tiempo.txt 
-  echo "$a" >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
+  echo "1" >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
 
   for j in $tamBloques; do
 
@@ -116,3 +117,5 @@ for i in 1 2 ; do
   python $(dirname $0)/../errorTotal.py $(dirname $0)/$expnum/$expnum-$i-sinBloque-texto.txt $(dirname $0)/$expnum/$expnum-$i-sinBloques-errorCuadMedio.txt >> $(dirname $0)/$expnum/$expnum-$i-erroresTotales.txt
 
 done
+
+#octave -q $(dirname $0)/exp3.m

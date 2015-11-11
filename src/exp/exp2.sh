@@ -79,3 +79,5 @@ for i in 1 2 3; do
   done
 
 done
+
+octave -q $(dirname $0)/exp2.m

@@ -10,6 +10,9 @@ video1 = open(sys.argv[1], 'r')
 video2 = open(sys.argv[2], 'r')
 salida = open(sys.argv[3], 'w')
 
+print video1
+print video2
+
 cant_cuadros1 = int(video1.readline())
 cant_cuadros2 = int(video2.readline())
 cant_cuadros = min(cant_cuadros2, cant_cuadros2)

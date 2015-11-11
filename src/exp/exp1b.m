@@ -10,6 +10,7 @@ mkdir('graficos');
 figure;
 
 hold on;
+axis([tam_x_a(length(tam_x_a)),tam_x_a(1)]);%esto es para que el eje x sea del tamaño de la cantidad de datos y no haya bordes blancos ocupando espacio
 h = errorbar(tam_x_a, tiempos_y_a, e_a, '-r');
 errorbar(tam_x_b, tiempos_y_b, e_b, '-g');
 errorbar(tam_x_c, tiempos_y_c, e_c, '-b');

@@ -9,6 +9,7 @@ mkdir('graficos');
 figure;
 
 hold on;
+axis([duracion_x_a(1),duracion_x_a(length(duracion_x_a))]);%esto es para que el eje x sea del tamaño de la cantidad de datos y no haya bordes blancos ocupando espacio
 h = errorbar(duracion_x_a, tiempos_y_a, e_a, '-r');
 errorbar(duracion_x_b, tiempos_y_b, e_b, '-g');
 errorbar(duracion_x_c, tiempos_y_c, e_c, '-b');
