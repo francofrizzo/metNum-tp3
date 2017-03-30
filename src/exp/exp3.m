@@ -4,6 +4,7 @@ cantVideos = 2;
 cantBloques = [2, 4, 6, 8, 10, 12, 14, 50, 80, 100, 130, 170]; 
 labels = [0, 2, 4, 6, 8, 10, 12, 14, 50, 80, 100, 130, 170, 255];
 
+
 filetype='-dpdf'; %CAMBIAR A PDF
 mkdir('graficos');
 figure;
